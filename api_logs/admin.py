@@ -4,9 +4,13 @@ from .models import PermittedUser, AlienUser
 
 @admin.register(PermittedUser)
 class PermittedUserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("time_login",)
+    fields = ("username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login")
+    readonly_fields = ("time_login",)
 
 
 @admin.register(AlienUser)
 class AlienUserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("time_login",)
+    fields = ("username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login")
+    readonly_fields = ("time_login",)
