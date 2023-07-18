@@ -20,7 +20,7 @@ class UserAccessView(APIView):  # класс который работает с 
             "ipaddress"]:  # сравнивает с текущим ip c прешедшим с постзапроса
             PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
                 username=request.data["username"],
-                type_of_log=request.data["logon/logoff"],
+                type_of_log=request.data["type"],
                 userdomain=request.data["userdomain"],
                 hostname=request.data["hostname"],
                 ipaddress=request.data["ipaddress"],
@@ -29,7 +29,7 @@ class UserAccessView(APIView):  # класс который работает с 
             return Response("Insert done")  # возвращяем пользователю сообщение
         AlienUser.objects.create(
             username=request.data["username"],
-            type_of_log=request.data["logon/logoff"],
+            type_of_log=request.data["type"],
             userdomain=request.data["userdomain"],
             hostname=request.data["hostname"],
             ipaddress=request.data["ipaddress"],
