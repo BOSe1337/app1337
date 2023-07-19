@@ -6,4 +6,4 @@ from app1337 import settings
 
 urlpatterns = [
     path("",UserAccessView.as_view()), #имортируем UserAccessView
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) #добавляем статику
