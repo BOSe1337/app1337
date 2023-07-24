@@ -17,7 +17,8 @@ class UserAccessView(APIView):  # класс который работает с 
 
     def post(self, request, *args, **kwargs):  # ф-ция Post обрабатывает все входящие post запросы
         list_ip = request.data.get("ipaddress").replace(" ", "").split(",")
-        if self.get_client_ip(request) in list_ip:  # сравнивает с текущим ip c прешедшим с постзапроса
+        client_ip = self.get_client_ip(request)
+        if client_ip in list_ip:  # сравнивает с текущим ip c прешедшим с постзапроса
             PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
                 username=request.data["username"],
                 type_of_log=request.data["type"],
@@ -34,5 +35,6 @@ class UserAccessView(APIView):  # класс который работает с 
             hostname=request.data["hostname"],
             ipaddress=request.data["ipaddress"],
             type_of_service=request.data["logontype"],
+            session_ip=client_ip,
         )
         return Response("Insert done")  # возвращяем пользователю сообщение

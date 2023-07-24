@@ -12,5 +12,6 @@ class PermittedUserAdmin(admin.ModelAdmin):
 @admin.register(AlienUser)
 class AlienUserAdmin(admin.ModelAdmin):
     list_display = ("time_login",)
-    fields = ("username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login")
+    fields = (
+    "username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login", "session_ip")
     readonly_fields = ("time_login",)
