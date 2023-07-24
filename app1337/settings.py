@@ -80,7 +80,7 @@ DATABASES = {  # Настраиваем подключение к серверу
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': '1',
-        'HOST': '192.168.0.13',
+        'HOST': '192.168.0.15',
         'PORT': '5432',
     }
 }

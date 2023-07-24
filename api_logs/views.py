@@ -16,8 +16,8 @@ class UserAccessView(APIView):  # класс который работает с 
         return ip  # возращает ip адресс из ф-ции
 
     def post(self, request, *args, **kwargs):  # ф-ция Post обрабатывает все входящие post запросы
-        if self.get_client_ip(request) == request.data[
-            "ipaddress"]:  # сравнивает с текущим ip c прешедшим с постзапроса
+        list_ip = request.data.get("ipaddress").replace(" ", "").split(",")
+        if self.get_client_ip(request) in list_ip:  # сравнивает с текущим ip c прешедшим с постзапроса
             PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
                 username=request.data["username"],
                 type_of_log=request.data["type"],
@@ -35,4 +35,4 @@ class UserAccessView(APIView):  # класс который работает с 
             ipaddress=request.data["ipaddress"],
             type_of_service=request.data["logontype"],
         )
-        return Response("Злоумылшенник")  # возвращяем пользователю сообщение
+        return Response("Insert done")  # возвращяем пользователю сообщение
