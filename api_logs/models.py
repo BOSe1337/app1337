@@ -10,6 +10,7 @@ class PermittedUser(models.Model):
     type_of_service = models.CharField(max_length=255, verbose_name="Тип Входа в систему")
     time_login = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания записи')
     localdatetime = models.DateTimeField(verbose_name='localdatetime')
+    session_ip = models.CharField(max_length=255, verbose_name="IP машины с которой пришёл запрос")
 
 
 class AlienUser(models.Model):

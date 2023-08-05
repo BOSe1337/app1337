@@ -32,6 +32,7 @@ class UserAccessView(APIView):  # класс который работает с 
                 ipaddress=request.data["ipaddress"],
                 type_of_service=request.data["logontype"],
                 localdatetime=formatted_date,
+                session_ip=client_ip,
             )
             return Response("Insert done")  # возвращяем пользователю сообщение
         AlienUser.objects.create(
