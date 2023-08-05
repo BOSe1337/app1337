@@ -5,7 +5,8 @@ from .models import PermittedUser, AlienUser
 @admin.register(PermittedUser)
 class PermittedUserAdmin(admin.ModelAdmin):
     list_display = ("time_login",)
-    fields = ("username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login")
+    fields = (
+    "username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login", "localdatetime")
     readonly_fields = ("time_login",)
 
 
@@ -13,5 +14,6 @@ class PermittedUserAdmin(admin.ModelAdmin):
 class AlienUserAdmin(admin.ModelAdmin):
     list_display = ("time_login",)
     fields = (
-    "username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login", "session_ip")
+        "username", "type_of_log", "userdomain", "hostname", "ipaddress", "type_of_service", "time_login",
+        "localdatetime", "session_ip")
     readonly_fields = ("time_login",)
