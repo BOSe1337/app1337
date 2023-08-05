@@ -17,6 +17,8 @@ class UserAccessView(APIView):  # класс который работает с 
 
     def post(self, request, *args, **kwargs):  # ф-ция Post обрабатывает все входящие post запросы
         list_ip = request.data.get("ipaddress").replace(" ", "").split(",")
+        #получаем список Ip адресов из запроса, убераем все пробелы, разбиваем строчку по запятым,
+        #превращая переменную в список
         client_ip = self.get_client_ip(request)
         if client_ip in list_ip:  # сравнивает с текущим ip c прешедшим с постзапроса
             PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
