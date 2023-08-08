@@ -3,7 +3,7 @@ from datetime import datetime
 from rest_framework.response import Response  # Импорты классов
 from rest_framework.views import APIView
 
-from .models import PermittedUser, AlienUser
+from .models import PermittedUser
 
 
 # Create your views here.
@@ -18,31 +18,19 @@ class UserAccessView(APIView):  # класс который работает с 
         return ip  # возращает ip адресс из ф-ции
 
     def post(self, request, *args, **kwargs):  # ф-ция Post обрабатывает все входящие post запросы
-        list_ip = request.data.get("ipaddress").replace(" ", "").split(",")
+
         # получаем список Ip адресов из запроса, убераем все пробелы, разбиваем строчку по запятым,
         # превращая переменную в список
         client_ip = self.get_client_ip(request)
-        formatted_date = datetime.strptime(request.data["localdatetime"], "%Y-%m-%d %H:%M:%S")
-        if client_ip in list_ip:  # сравнивает с текущим ip c прешедшим с постзапроса
-            PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
-                username=request.data["username"],
-                type_of_log=request.data["type"],
-                userdomain=request.data["userdomain"],
-                hostname=request.data["hostname"],
-                ipaddress=request.data["ipaddress"],
-                type_of_service=request.data["logontype"],
-                localdatetime=formatted_date,
-                session_ip=client_ip,
-            )
-            return Response("Insert done")  # возвращяем пользователю сообщение
-        AlienUser.objects.create(
+
+        PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
             username=request.data["username"],
             type_of_log=request.data["type"],
             userdomain=request.data["userdomain"],
             hostname=request.data["hostname"],
             ipaddress=request.data["ipaddress"],
             type_of_service=request.data["logontype"],
-            localdatetime=formatted_date,
+            localdatetime=datetime.strptime(request.data["localdatetime"], "%Y-%m-%d %H:%M:%S"),
             session_ip=client_ip,
         )
         return Response("Insert done")  # возвращяем пользователю сообщение

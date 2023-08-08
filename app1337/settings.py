@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'app1337.wsgi.application'
 DATABASES = {  # Настраиваем подключение к серверу где БД
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'NAME': 'test',
         'USER': 'postgres',
         'PASSWORD': '1',
         'HOST': '192.168.0.25',
