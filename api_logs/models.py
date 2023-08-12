@@ -15,7 +15,6 @@ class PermittedUser(models.Model):
 
 class StateUser(models.Model):
     username = models.CharField(max_length=255, verbose_name="username")
-    type_of_log = models.CharField(max_length=255, verbose_name="logon/logoff")
     userdomain = models.CharField(max_length=255, verbose_name="userdomain")
     hostname = models.CharField(max_length=255, verbose_name="hostname")
     ipaddress = models.CharField(max_length=255, verbose_name="ip address")
