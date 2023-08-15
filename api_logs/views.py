@@ -1,4 +1,5 @@
 from datetime import datetime
+import threading
 
 from rest_framework.response import Response  # Импорты классов
 from rest_framework.views import APIView
@@ -8,6 +9,8 @@ from .models import PermittedUser, StateUser
 
 # Create your views here.
 class UserAccessView(APIView):  # класс который работает с запросами
+    lock = threading.Lock()
+
     @staticmethod
     def get_client_ip(request):  # ф-ция определяющая ip адресс с которого пробросили запрос
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')  # request отвечает за данные с запроса
@@ -40,49 +43,54 @@ class UserAccessView(APIView):  # класс который работает с 
         type_request = request.data['type'].split()[-1]
         # Получаем тип входа из запроса. Разбиваем по пробелам и берем последний элемент
         # (потому что в последнем элементе лежит ключевое слово)
-        PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
-            username=request.data["username"],
-            type_of_log=request.data["type"],
-            userdomain=request.data["userdomain"],
-            hostname=request.data["hostname"],
-            ipaddress=request.data["ipaddress"],
-            type_of_service=request.data["logontype"],
-            localdatetime=datetime.strptime(request.data["localdatetime"], "%Y-%m-%d %H:%M:%S"),
-            session_ip=client_ip,
-        )
-        if type_request == 'logon':
-            self.state_user(request, client_ip)
-            # Либо получаем такого пользователя, либо создаём
-        elif type_request == 'logoff':
-            self.state_user(request, client_ip).delete()
-            # Получаем такого пользователя и удаляем
-        elif type_request == 'lock':
-            user = self.state_user(request, client_ip)
-            user.state = "locked"
-            user.save()
-            # Получаем такого пользователя и меняем state на locked
-        elif type_request == 'unlock':
-            user = self.state_user(request, client_ip)
-            user.state = "active"
-            user.save()
-            # Получаем такого пользователя и меняем state на active
-        elif type_request == 'disconnect':
-            user = self.state_user(request, client_ip)
-            user.state = "disconnect"
-            user.save()
-            # Получаем такого пользователя и меняем state на disconnect
-        elif type_request == 'reconnect':
-            user = self.state_user(request, client_ip)
-            user.state = "active"
-            user.save()
-            # Получаем такого пользователя и меняем state на active
-        elif type_request == 'powerOFF':
-            users = StateUser.objects.filter(
-                hostname=request.data["hostname"],
-                localdatetime__lte=datetime.strptime(request.data["localdatetime"], "%Y-%m-%d %H:%M:%S")
-            )
-            for user in users:
-                user.delete()
-            # Получаем всех пользователей по hostname
-            # localdatetime__lte (время меньше или равно) localdatetime события выключения и удаляем такие записи
-        return Response("Insert done")  # возвращяем пользователю сообщение
+        if UserAccessView.lock.acquire(blocking=False):
+            try:
+                PermittedUser.objects.create(  # создаём запись в таблице PermittedUser
+                    username=request.data["username"],
+                    type_of_log=request.data["type"],
+                    userdomain=request.data["userdomain"],
+                    hostname=request.data["hostname"],
+                    ipaddress=request.data["ipaddress"],
+                    type_of_service=request.data["logontype"],
+                    localdatetime=datetime.strptime(request.data["localdatetime"], "%Y-%m-%d %H:%M:%S"),
+                    session_ip=client_ip,
+                )
+                if type_request == 'logon':
+                    self.state_user(request, client_ip)
+                    # Либо получаем такого пользователя, либо создаём
+                elif type_request == 'logoff':
+                    self.state_user(request, client_ip).delete()
+                    # Получаем такого пользователя и удаляем
+                elif type_request == 'lock':
+                    user = self.state_user(request, client_ip)
+                    user.state = "locked"
+                    user.save()
+                    # Получаем такого пользователя и меняем state на locked
+                elif type_request == 'unlock':
+                    user = self.state_user(request, client_ip)
+                    user.state = "active"
+                    user.save()
+                    # Получаем такого пользователя и меняем state на active
+                elif type_request == 'disconnect':
+                    user = self.state_user(request, client_ip)
+                    user.state = "disconnect"
+                    user.save()
+                    # Получаем такого пользователя и меняем state на disconnect
+                elif type_request == 'reconnect':
+                    user = self.state_user(request, client_ip)
+                    user.state = "active"
+                    user.save()
+                    # Получаем такого пользователя и меняем state на active
+                elif type_request == 'powerOFF':
+                    users = StateUser.objects.filter(
+                        hostname=request.data["hostname"],
+                        localdatetime__lte=datetime.strptime(request.data["localdatetime"], "%Y-%m-%d %H:%M:%S")
+                    )
+                    for user in users:
+                        user.delete()
+                    # Получаем всех пользователей по hostname
+                    # localdatetime__lte (время меньше или равно) localdatetime события выключения и удаляем такие записи
+            finally:
+                UserAccessView.lock.release()
+
+            return Response("Insert done")
