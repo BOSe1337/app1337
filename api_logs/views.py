@@ -40,7 +40,7 @@ class UserAccessView(APIView):  # класс который работает с 
             )
 
     @staticmethod
-    def change_user(user, **kwargs):#Добавил ф-цию которая меняет значения для пользователя валуе
+    def change_user(user, **kwargs):  # Добавил ф-цию которая меняет значения для пользователя валуе
         for key, value in kwargs.items():
             setattr(user, key, value)
         user.save()
@@ -64,7 +64,7 @@ class UserAccessView(APIView):  # класс который работает с 
                     localdatetime=localdatetime,
                     session_ip=client_ip,
                 )
-                if type_request in ['(LOGON)', '(UNLOCK)', '(RECONNECT)']: #укоротил условие
+                if type_request in ['(LOGON)', '(UNLOCK)', '(RECONNECT)']:  # укоротил условие
                     self.change_user(
                         self.state_user(request, client_ip),
                         state="active",
@@ -91,10 +91,13 @@ class UserAccessView(APIView):  # класс который работает с 
                 elif type_request == '(POWEROFF)':
                     StateUser.objects.filter(
                         hostname=request.data["hostname"],
-                        localdatetime__lte=localdatetime#lte меньше или равно
+                        localdatetime__lte=localdatetime  # lte меньше или равно
                     ).delete()
                     # Получаем всех пользователей по hostname
                     # localdatetime__lte (время меньше или равно) localdatetime события выключения и удаляем такие записи
             finally:
                 UserAccessView.lock.release()
+            return Response("Insert done")
+        else:
+            UserAccessView.lock.release()
             return Response("Insert done")
