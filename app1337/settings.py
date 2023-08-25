@@ -80,7 +80,7 @@ DATABASES = {  # Настраиваем подключение к серверу
         'NAME': 'test',
         'USER': 'postgres',
         'PASSWORD': '1',
-        'HOST': '192.168.0.30',
+        'HOST': '192.168.0.11',
         'PORT': '5432',
     }
 }
@@ -129,3 +129,11 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_BROKER_TRANSPORT_VISIBILITY_TIMEOUT = 3600
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_IMPORTS = ["api_logs.tasks"]
